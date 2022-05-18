@@ -50,8 +50,8 @@ The method used for weights can be found in func4, and the method used for condi
 
 ## Tips for compiling
 
-There are multiple ways to compile the code, but I have only done so with Visual Studio 2022 using CMake and vcpkg. Cmake can be installed through the Visual Studio Installer and vcpkg can be found [here](https://github.com/microsoft/vcpkg). The packages used are described in [vcpkg.json](https://github.com/.../vcpkg.json), and I use x64 libraries for imgui, glad, glfw3, glfw-binding for imgui, and opengl3-binding for imgui. I suppose you could use x86 libraries if you wish to compile for 32 bit. You may want to set the environment variable VCPKG_ROOT to its install location since it is used in [CMakePresets.json](https://github.com/.../vcpkg.json). If you want to compile for a different operating system, you might need to change the "long double" in the code to something else, but I'm not sure.
+There are multiple ways to compile the code, but I have only done so with Visual Studio 2022 using CMake and vcpkg. Cmake can be installed through the Visual Studio Installer and vcpkg can be found [here](https://github.com/microsoft/vcpkg). The packages used are described in [vcpkg.json](https://github.com/DJ0002/AbilityStoneCalculator/blob/main/vcpck.json), and I use x64 libraries for imgui, glad, glfw3, glfw-binding for imgui, and opengl3-binding for imgui. I suppose you could use x86 libraries if you wish to compile for 32 bit. You may want to set the environment variable VCPKG_ROOT to its install location since it is used in [CMakePresets.json](https://github.com/DJ0002/AbilityStoneCalculator/blob/main/CMakePresets.json). If you want to compile for a different operating system, you might need to change the "long double" in the code to something else, but I'm not sure.
 
 ## License
 
-Code released under the [MIT License](https://github.com/.../LICENSE).
+Code released under the [MIT License](https://github.com/DJ0002/AbilityStoneCalculator/blob/main/LICENSE).
