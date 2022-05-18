@@ -2,6 +2,10 @@
 
 A GUI Calculator for making optimal decisions for Ability Stones in the game Lost Ark
 
+# Download
+
+The download can be found here: [Ability Stone Calculator Windows 64 bit](https://github.com/DJ0002/AbilityStoneCalculator/releases/tag/v1.0).
+
 ## Table of contents
 
 - [Summary](#summary)
@@ -11,7 +15,7 @@ A GUI Calculator for making optimal decisions for Ability Stones in the game Los
 
 ## Summary
 
-A download for the windows 64 bit executable is available in the release section of the page or [here](https://github.com/DJ0002/AbilityStoneCalculator/releases/tag/v1.0). This calculator will solve for the optimal strategy to minimize the expected value for row 3, which maximizes the expected value for rows 1 & 2. The calculator also solves for the optimal strategy to balance the expected values of row 1 & row 2 according to their weights. The weights range from 0 to 1 where the weight of row 1 + the weight of row 2 = 1. A weight of 0.5 means both rows are equally weighted, and a row with a weight of 1 means that row will be maximized and the other one will be minimized. Probability mode will allow for probability calculations and the display of the actual expected value for the row that is not picked in a tie. The strategy for probability mode is not different from not using it. Probability mode will allow you to enable conditions on row 1 & row 2, which can change the strategy. By enabling conditions, the calculator will maximize the probability of meeting those conditions, then apply weights after the conditions are met. If the conditions cannot be met, the calculator will aim to for closest conditions that can be met through maximizing the probability.
+This calculator will solve for the optimal strategy to minimize the expected value for row 3, which maximizes the expected value for rows 1 & 2. The calculator also solves for the optimal strategy to balance the expected values of row 1 & row 2 according to their weights. The weights range from 0 to 1 where the weight of row 1 + the weight of row 2 = 1. A weight of 0.5 means both rows are equally weighted, and a row with a weight of 1 means that row will be maximized and the other one will be minimized. Probability mode will allow for probability calculations and the display of the actual expected value for the row that is not picked in a tie. The strategy for probability mode is not different from not using it. Probability mode will allow you to enable conditions on row 1 & row 2, which can change the strategy. By enabling conditions, the calculator will maximize the probability of meeting those conditions, then apply weights after the conditions are met. If the conditions cannot be met, the calculator will aim to for closest conditions that can be met through maximizing the probability.
 
 Start off by selecting whether or not you want to enable probability mode, then input the settings and click on the apply settings button, which will perform the calculations to find the optimal strategy. The green area represents the optimal decision determined by the calculator.
 
