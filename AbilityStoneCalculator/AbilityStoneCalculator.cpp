@@ -1194,9 +1194,9 @@ int main(int, char**) {
                 }
                 ImGui::EndPopup();
             }
-            const ImVec2 base_d = ImGui::GetCursorScreenPos();
-            x = base_d.x + 4.0f;
-            y = base_d.y + 4.0f;
+            const ImVec2 screen_p = ImGui::GetCursorScreenPos();
+            x = screen_p.x + 4.0f;
+            y = screen_p.y + 4.0f;
             sz2 += 16.0f * ImGui::GetIO().DeltaTime;
             if (sz2 > 23.0f)
                 sz2 = 1.0f;
@@ -1207,7 +1207,7 @@ int main(int, char**) {
                 draw_list->AddRectFilled(ImVec2(x, y), ImVec2(x + sz + 9 * (sz + spacing), y + sz / 2 - 2.0f), ImColor(30, 40, 55, 255));
                 x += 515.0f;
                 draw_list->AddNgonFilled(ImVec2(x + sz * 0.20f, y + sz * 0.20f), sz * 0.20f, ImColor(1, 151, 213, 255), 4);
-                x = base_d.x + 4.0f;
+                x = screen_p.x + 4.0f;
                 y += sz / 2 - 2.0f;
                 draw_list->AddRectFilled(ImVec2(x, y), ImVec2(x + sz + 9 * (sz + spacing), y + sz + 4.0f), ImColor(0, 0, 0, 255));
                 y += 2.0f;
@@ -1453,13 +1453,13 @@ int main(int, char**) {
                         }
                     }
                 }
-                x = base_d.x + 4.0f;
+                x = screen_p.x + 4.0f;
                 y += sz + spacing - 4.0f;
             }
             draw_list->AddRectFilled(ImVec2(x, y), ImVec2(x + sz + 9 * (sz + spacing), y + sz / 2 - 2.0f), ImColor(44, 28, 33, 255));
             x += 515.0f;
             draw_list->AddNgonFilled(ImVec2(x + sz * 0.20f, y + sz * 0.20f), sz * 0.20f, ImColor(179, 70, 65, 255), 4);
-            x = base_d.x + 4.0f;
+            x = screen_p.x + 4.0f;
             ImGui::Dummy(ImVec2(0.0f, 16.0f));
             ImGui::SameLine();
             ImGui::Text("row 3                     expected value = %f", r3e + r3s);
