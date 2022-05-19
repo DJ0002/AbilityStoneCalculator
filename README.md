@@ -4,7 +4,7 @@ A GUI Calculator for making optimal decisions for Ability Stones in the game Los
 
 # Download
 
-The download can be found here: [Ability Stone Calculator Windows 64 bit](https://github.com/DJ0002/AbilityStoneCalculator/releases/tag/v1.1).
+The download can be found here: [Ability Stone Calculator Windows 64 bit](https://github.com/DJ0002/AbilityStoneCalculator/releases/tag/1.1).
 
 ## Table of contents
 
