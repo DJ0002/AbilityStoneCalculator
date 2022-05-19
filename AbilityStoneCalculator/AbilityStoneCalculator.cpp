@@ -817,7 +817,7 @@ int main(int, char**) {
     size_t r1p = 0, r2p = 0, r3p = 0, r12p = 0, r4p = 0, r1st = 0, r2st = 0, r3st = 0, smaxa = 0, s1a = 0, s1 = 10, r1pt = 0, r2pt = 0, r3pt = 0;
     int hist[31]{};
     long double w1 = 0.5, w2 = 0.5, r1e = 0, r2e = 0, r3e = 0, prob = 0, prob2 = 0, w2a = 0;
-    float sz2 = 1.0f, x = 0.0f, y = 0.0f, progress = 0.0f, dyd = 51.0f, dxd = 4.0f;
+    float sz2 = 1.0f, x = 0.0f, y = 0.0f, progress = 0.0f, dyd = 51.0f, dxd = 4.0f, f1 = 0.5f;
     const float sz = 48.0f, spacing = 10.0f;
     long double base_e[6][231]; //base expected value table
     bool base_d[6][200]{}; //base decision tables
@@ -1040,7 +1040,17 @@ int main(int, char**) {
                 ImGui::SameLine();
                 HelpMarker("Weights are used after conditions are met.");
             }
-            if (ImGui::InputScalar("weight of row 1", ImGuiDataType_Double, &w2, NULL, NULL, "%f")) {
+            //if (ImGui::InputScalar("weight of row 1", ImGuiDataType_Double, &w2, NULL, NULL, "%f")) {
+            //    if (w2 < 0)
+            //        w2 = 0;
+            //    else if (w2 > 1)
+            //        w2 = 1;
+            //    pickr1 ? w1 = w2 : w1 = 1 - w2;
+            //}
+            ImGui::PopItemWidth();
+            ImGui::PushItemWidth(200.f);
+            if (ImGui::SliderFloat("weight of row 1", &f1, 0.0f, 1.0f)) {
+                w2 = static_cast<long double>(f1);
                 if (w2 < 0)
                     w2 = 0;
                 else if (w2 > 1)
@@ -1048,7 +1058,7 @@ int main(int, char**) {
                 pickr1 ? w1 = w2 : w1 = 1 - w2;
             }
             ImGui::SameLine();
-            HelpMarker("Enter a value from 0 to 1.\nWeight of row 2 is 1 minus this value.");
+            HelpMarker("Slide to value or Ctrl+left click to enter a value.\nWeight of row 2 is 1 minus this value.");
             if (ImGui::Button("slots per row"))
                 ImGui::OpenPopup("my_select_popup1");
             ImGui::SameLine();
