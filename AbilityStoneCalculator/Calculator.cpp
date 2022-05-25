@@ -995,7 +995,7 @@ long double finde(size_t i, size_t j, size_t coord, size_t r1, size_t r2, size_t
 		else {
 			r3p = r3s + coord / s;
 			r1p = r1s + t / (r2 + 1);
-			return r2p * prob_t[prob_i][i][j][(r1 + 1) * (r2 + 1) * r3p + (r2 + 1) * (r1p - r1s) + r2p - r2s];
+			return r2p * prob_t[prob_i][i][j][(r1 + 1) * (r2 + 1) * (r3p - r3s) + (r2 + 1) * (r1p - r1s) + r2p - r2s];
 		}
 	}
 	return 0;

@@ -190,7 +190,7 @@ void FillTable2(size_t row, size_t column, size_t z, size_t smax, size_t r1st, s
     }
     else if (dt[prob_i][smax * smax * z + smax * (row + 1) + column][(smax - column) * r1st + r2st] == 2) {
         if (sacrifice)
-            table_mem[100 * z + 10 * row + column - 1] = r3st + expr2(smax * smax * z + smax * (row + 1) + column, (smax - column) * r1st + r2st, row + 1, column, z, r1st, r2st, r3st, prob_t, prob_i);
+            table_mem[100 * z + 10 * row + column - 1] = r3st + expr3(smax * smax * z + smax * (row + 1) + column, (smax - column) * r1st + r2st, row + 1, column, z, r1st, r2st, r3st, prob_t, prob_i);
         else table_mem[100 * z + 10 * row + column - 1] = r3st + base_e[prob_i][21 * z + row + column + 1];
         ImGui::Text("%f", table_mem[100 * z + 10 * row + column - 1]);
     }
