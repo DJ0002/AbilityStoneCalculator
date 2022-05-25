@@ -1199,34 +1199,34 @@ int main(int, char**) {
                 //30 = row 3 fail, 31 = row 3 success, 32 = row 3 fail at p = 75, 33 = row 3 success at p = 25
                 if (hist[0] > 0) {
                     if (hist[hist[0]] == 10 || hist[hist[0]] == 12) {
-                        row1--;
+                        r1sh[--row1] = false;
                         if (p > 25 && !(p == 75 && hist[hist[0]] % 10 == 2))
                             p -= 10;
                     }
                     else if (hist[hist[0]] == 11 || hist[hist[0]] == 13) {
-                        row1--;
+                        r1sh[--row1] = false;
                         r1s--;
                         if (p < 75 && !(p == 25 && hist[hist[0]] % 10 == 3))
                             p += 10;
                     }
                     else if (hist[hist[0]] == 20 || hist[hist[0]] == 22) {
-                        row2--;
+                        r2sh[--row2] = false;
                         if (p > 25 && !(p == 75 && hist[hist[0]] % 10 == 2))
                             p -= 10;
                     }
                     else if (hist[hist[0]] == 21 || hist[hist[0]] == 23) {
-                        row2--;
+                        r2sh[--row2] = false;
                         r2s--;
                         if (p < 75 && !(p == 25 && hist[hist[0]] % 10 == 3))
                             p += 10;
                     }
                     else if (hist[hist[0]] == 30 || hist[hist[0]] == 32) {
-                        row3--;
+                        r3sh[--row3] = false;
                         if (p > 25 && !(p == 75 && hist[hist[0]] % 10 == 2))
                             p -= 10;
                     }
                     else {
-                        row3--;
+                        r3sh[--row3] = false;
                         r3s--;
                         if (p < 75 && !(p == 25 && hist[hist[0]] % 10 == 3))
                             p += 10;
