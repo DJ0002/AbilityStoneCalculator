@@ -102,12 +102,24 @@ void initcalcTable2(size_t slots, bool base_d[6][200], std::vector<std::vector<s
 //Similar to calcProbabilities but with conditions on row 1 & row 2 & simultaneously does calculations from calcTable.
 void calcTable2(size_t r3, size_t r1, size_t r1c, size_t r2c, size_t slots, bool base_d[6][200], long double w1, std::vector<std::vector<std::vector<int>>>& dt, std::vector<std::vector<std::vector<std::vector<long double>>>>& exp, std::vector<std::vector<std::vector<std::vector<long double>>>>& prob_t);
 
+long double applyconditions2(size_t r1c, size_t r2c, size_t r3c, size_t i, size_t j, size_t coord, size_t r1, size_t r2, size_t r3, size_t r1s, size_t r2s, size_t r3s, std::vector<std::vector<std::vector<std::vector<long double>>>>& prob_t, size_t prob_i);
+
+void func14(size_t r1c, size_t r2c, size_t r3c, size_t slots, size_t r3, size_t r1, size_t r2, size_t r1s, size_t r2s, size_t r3s, long double p, long double w1, std::vector<std::vector<std::vector<int>>>& dt, std::vector<std::vector<std::vector<std::vector<long double>>>>& exp, std::vector<std::vector<std::vector<std::vector<long double>>>>& prob_t, size_t p1, size_t p2, size_t p3);
+
+void func15(size_t r1c, size_t r2c, size_t r3c, size_t slots, size_t r3, size_t r1, size_t r2, size_t r1s, size_t r2s, size_t r3s, long double p, long double w1, bool base_d[6][200], std::vector<std::vector<std::vector<int>>>& dt, std::vector<std::vector<std::vector<std::vector<long double>>>>& exp, std::vector<std::vector<std::vector<std::vector<long double>>>>& prob_t, size_t p1, size_t p2, size_t p3);
+
+void calcTable3(size_t r3, size_t r1, size_t r1c, size_t r2c, size_t r3c, size_t slots, bool base_d[6][200], long double w1, std::vector<std::vector<std::vector<int>>>& dt, std::vector<std::vector<std::vector<std::vector<long double>>>>& exp, std::vector<std::vector<std::vector<std::vector<long double>>>>& prob_t);
+
+long double finde2(size_t i, size_t j, size_t coord, size_t r1, size_t r2, size_t r3, size_t r1s, size_t r2s, size_t r3s, std::vector<std::vector<std::vector<std::vector<long double>>>>& prob_t, size_t prob_i);
+
+long double expr3(size_t i, size_t j, size_t r1, size_t r2, size_t r3, size_t r1s, size_t r2s, size_t r3s, std::vector<std::vector<std::vector<std::vector<long double>>>>& prob_t, size_t prob_i);
+
 //Finds the expected value of row 2 by converting the parameters to r1p, r2p, & r3p to find the probability then return its product with r2p
 //The expected value in exp assumes row 2 can be chosen in a tie for optimization purposes, but it will not be chosen for the calculations, so this function will find the actual value.
-long double finde(size_t i, size_t j, size_t coord, size_t r1, size_t r2, size_t r3, size_t r1s, size_t r2s, std::vector<std::vector<std::vector<std::vector<long double>>>>& prob_t, size_t prob_i);
+long double finde(size_t i, size_t j, size_t coord, size_t r1, size_t r2, size_t r3, size_t r1s, size_t r2s, size_t r3s, std::vector<std::vector<std::vector<std::vector<long double>>>>& prob_t, size_t prob_i);
 
 //Sums up the individual expected values to find the total expected value for row 2
-long double expr2(size_t i, size_t j, size_t r1, size_t r2, size_t r3, size_t r1s, size_t r2s, std::vector<std::vector<std::vector<std::vector<long double>>>>& prob_t, size_t prob_i);
+long double expr2(size_t i, size_t j, size_t r1, size_t r2, size_t r3, size_t r1s, size_t r2s, size_t r3s, std::vector<std::vector<std::vector<std::vector<long double>>>>& prob_t, size_t prob_i);
 
 //Finds an individual probability associated with P(row 1 + row 2 >= r12p and row 3 <= r4p)
 long double findp1(size_t r12p, size_t r4p, size_t i, size_t j, size_t coord, size_t r1, size_t r2, size_t r3, size_t r1s, size_t r2s, size_t r3s, std::vector<std::vector<std::vector<std::vector<long double>>>>& prob_t, size_t prob_i);
@@ -126,9 +138,9 @@ void update_probabilities(long double& prob, long double& prob2, int p, size_t s
 
 //Updates the optimal decision (choice), expected value of row 1, expected value of row 2, & expected value of row 3 based on the changes to the other parameters
 //s1 is the current amount of slots per row, smax is the applied amount of slots per row, & row1/row2/row3 is the total amount of slots succeeded & failed in the corresponding row.
-void func13(size_t smax, int& choice, size_t s1, size_t row3, size_t r1s, size_t r2s, size_t row1, size_t row2, long double& r1e, long double& r2e, long double& r3e, bool p_m, long double base_e[6][231], std::vector<std::vector<std::vector<int>>>& dt, std::vector<std::vector<std::vector<std::vector<long double>>>>& exp, std::vector<std::vector<std::vector<std::vector<long double>>>>& prob_t, int prob_i);
+void func13(size_t smax, int& choice, size_t s1, size_t row3, size_t r1s, size_t r2s, size_t r3s, size_t row1, size_t row2, long double& r1e, long double& r2e, long double& r3e, bool p_m, bool sacrifice, long double base_e[6][231], std::vector<std::vector<std::vector<int>>>& dt, std::vector<std::vector<std::vector<std::vector<long double>>>>& exp, std::vector<std::vector<std::vector<std::vector<long double>>>>& prob_t, int prob_i);
 
 //Combines func13 & update_probabilities
-void update_changes(long double& prob, long double& prob2, size_t r1p, size_t r2p, size_t r3p, size_t r12p, size_t r4p, size_t smax, int& p, int& choice, size_t s1, size_t& row3, size_t& r1s, size_t& r2s, size_t& r3s, size_t& row1, size_t& row2, long double& r1e, long double& r2e, long double& r3e, bool p_m, long double base_e[6][231], std::vector<std::vector<std::vector<int>>>& dt, std::vector<std::vector<std::vector<std::vector<long double>>>>& exp, std::vector<std::vector<std::vector<std::vector<long double>>>>& prob_t);
+void update_changes(long double& prob, long double& prob2, size_t r1p, size_t r2p, size_t r3p, size_t r12p, size_t r4p, size_t smax, int& p, int& choice, size_t s1, size_t& row3, size_t& r1s, size_t& r2s, size_t& r3s, size_t& row1, size_t& row2, long double& r1e, long double& r2e, long double& r3e, bool p_m, bool sacrifice, long double base_e[6][231], std::vector<std::vector<std::vector<int>>>& dt, std::vector<std::vector<std::vector<std::vector<long double>>>>& exp, std::vector<std::vector<std::vector<std::vector<long double>>>>& prob_t);
 
 #endif 

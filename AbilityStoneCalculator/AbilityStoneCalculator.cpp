@@ -34,7 +34,7 @@ void HelpMarker(const char* desc) {
     }
 }
 
-void PerformReset(int hist[31], size_t smax, size_t s1, bool pickr1, bool p_m, long double &prob, long double &prob2, size_t r1p, size_t r2p, size_t r3p, size_t r12p, size_t r4p, size_t &r1s, size_t &r2s, size_t &r3s, size_t &row1, size_t &row2, size_t &row3, int &p, bool r1sh[10], bool r2sh[10], bool r3sh[10], int &choice, long double &r1e, long double &r2e, long double &r3e, long double base_e[6][231], std::vector<std::vector<std::vector<int>>>& dt, std::vector<std::vector<std::vector<std::vector<long double>>>>& exp, std::vector<std::vector<std::vector<std::vector<long double>>>>& prob_t) {
+void PerformReset(int hist[31], size_t smax, size_t s1, bool pickr1, bool p_m, bool sacrifice, long double &prob, long double &prob2, size_t r1p, size_t r2p, size_t r3p, size_t r12p, size_t r4p, size_t &r1s, size_t &r2s, size_t &r3s, size_t &row1, size_t &row2, size_t &row3, int &p, bool r1sh[10], bool r2sh[10], bool r3sh[10], int &choice, long double &r1e, long double &r2e, long double &r3e, long double base_e[6][231], std::vector<std::vector<std::vector<int>>>& dt, std::vector<std::vector<std::vector<std::vector<long double>>>>& exp, std::vector<std::vector<std::vector<std::vector<long double>>>>& prob_t) {
     r1s = 0; r2s = 0; r3s = 0; row1 = 0; row2 = 0; row3 = 0; p = 75;
     for (size_t i = 0; i < 10; i++) {
         r1sh[i] = false;
@@ -43,14 +43,17 @@ void PerformReset(int hist[31], size_t smax, size_t s1, bool pickr1, bool p_m, l
     }
     choice = dt[5][(smax * smax + smax + 1) * s1][0];
     r1e = exp[5][(smax * smax + smax + 1) * s1][0][0];
-    r3e = base_e[5][23 * s1];
     for (size_t i = 0; i < 31; i++)
         hist[i] = 0;
     if (p_m) {
-        r2e = expr2((smax * smax + smax + 1) * s1, 0, s1, s1, s1, 0, 0, prob_t, 5);
+        r2e = expr2((smax * smax + smax + 1) * s1, 0, s1, s1, s1, 0, 0, 0, prob_t, 5);
         func11(r12p, r4p, prob2, (smax * smax + smax + 1) * s1, 0, s1, s1, s1, r1s, r2s, r3s, prob_t, 5);
         func12(r3p, r1p, r2p, prob, (smax * smax + smax + 1) * s1, 0, s1, s1, s1, r1s, r2s, r3s, prob_t, 5);
     }
+    else r2e = exp[5][(smax * smax + smax + 1) * s1][0][1];
+    if (sacrifice)
+        r3e = expr3((smax * smax + smax + 1) * s1, 0, s1, s1, s1, 0, 0, 0, prob_t, 5);
+    else r3e = base_e[5][23 * s1];
 }
 
 void FillTable1(size_t row, size_t column, bool base_d[6][200], long double base_e[6][231], int prob_i) {
@@ -134,14 +137,16 @@ void ColorCell1(size_t row, size_t column, size_t z, size_t smax, size_t r1st, s
     }
 }
 
-void FillTable2(size_t row, size_t column, size_t z, size_t smax, size_t r1st, size_t r2st, bool calc_done, bool p_m, bool pickr1, long double base_e[6][231], std::vector<std::vector<std::vector<int>>>& dt, std::vector<std::vector<std::vector<std::vector<long double>>>>& exp, std::vector<std::vector<std::vector<std::vector<long double>>>>& prob_t, int prob_i, std::vector<long double>& table_mem) {
+void FillTable2(size_t row, size_t column, size_t z, size_t smax, size_t r1st, size_t r2st, size_t r3st, bool calc_done, bool p_m, bool sacrifice, bool pickr1, long double base_e[6][231], std::vector<std::vector<std::vector<int>>>& dt, std::vector<std::vector<std::vector<std::vector<long double>>>>& exp, std::vector<std::vector<std::vector<std::vector<long double>>>>& prob_t, int prob_i, std::vector<long double>& table_mem) {
     if (calc_done || table_mem[100 * z + 10 * row + column - 1] != -1) {
         ImGui::Text("%f", table_mem[100 * z + 10 * row + column - 1]);
         ColorCell1(row, column, z, smax, r1st, r2st, pickr1, dt, prob_i);
     }
     else if (pickr1) {
         if (dt[prob_i][smax * smax * z + smax * column + row + 1][(smax - row - 1) * r1st + r2st] == 2) {
-            table_mem[100 * z + 10 * row + column - 1] = base_e[prob_i][21 * z + row + column + 1];
+            if (sacrifice)
+                table_mem[100 * z + 10 * row + column - 1] = r3st + expr3(smax * smax * z + smax * column + row + 1, (smax - row - 1) * r1st + r2st, column, row + 1, z, r1st, r2st, r3st, prob_t, prob_i);
+            else table_mem[100 * z + 10 * row + column - 1] = r3st + base_e[prob_i][21 * z + row + column + 1];
             ImGui::Text("%f", table_mem[100 * z + 10 * row + column - 1]);
         }
         else if (dt[prob_i][smax * smax * z + smax * column + row + 1][(smax - row - 1) * r1st + r2st] == 3) {
@@ -169,14 +174,10 @@ void FillTable2(size_t row, size_t column, size_t z, size_t smax, size_t r1st, s
             }
         }
         else {
-            if (p_m) {
-                table_mem[100 * z + 10 * row + column - 1] = r2st + expr2(smax * smax * z + smax * column + row + 1, (smax - row - 1) * r1st + r2st, column, row + 1, z, r1st, r2st, prob_t, prob_i);
-                ImGui::Text("%f", table_mem[100 * z + 10 * row + column - 1]);
-            }
-            else {
-                table_mem[100 * z + 10 * row + column - 1] = r2st + exp[prob_i][smax * smax * z + smax * column + row + 1][(smax - row - 1) * r1st + r2st][1];
-                ImGui::Text("%f", table_mem[100 * z + 10 * row + column - 1]);
-            }
+            if (p_m)
+                table_mem[100 * z + 10 * row + column - 1] = r2st + expr2(smax * smax * z + smax * column + row + 1, (smax - row - 1) * r1st + r2st, column, row + 1, z, r1st, r2st, r3st, prob_t, prob_i);
+            else table_mem[100 * z + 10 * row + column - 1] = r2st + exp[prob_i][smax * smax * z + smax * column + row + 1][(smax - row - 1) * r1st + r2st][1];
+            ImGui::Text("%f", table_mem[100 * z + 10 * row + column - 1]);
             if (row % 2 == 0) {
                 ImU32 cell_bg_color = ImGui::GetColorU32(ImVec4(0.28f, 0.68f, 0.28f, 0.65f));
                 ImGui::TableSetBgColor(ImGuiTableBgTarget_CellBg, cell_bg_color);
@@ -188,7 +189,9 @@ void FillTable2(size_t row, size_t column, size_t z, size_t smax, size_t r1st, s
         }
     }
     else if (dt[prob_i][smax * smax * z + smax * (row + 1) + column][(smax - column) * r1st + r2st] == 2) {
-        table_mem[100 * z + 10 * row + column - 1] = base_e[prob_i][21 * z + row + column + 1];
+        if (sacrifice)
+            table_mem[100 * z + 10 * row + column - 1] = r3st + expr2(smax * smax * z + smax * (row + 1) + column, (smax - column) * r1st + r2st, row + 1, column, z, r1st, r2st, r3st, prob_t, prob_i);
+        else table_mem[100 * z + 10 * row + column - 1] = r3st + base_e[prob_i][21 * z + row + column + 1];
         ImGui::Text("%f", table_mem[100 * z + 10 * row + column - 1]);
     }
     else if (dt[prob_i][smax * smax * z + smax * (row + 1) + column][(smax - column) * r1st + r2st] == 3) {
@@ -216,14 +219,10 @@ void FillTable2(size_t row, size_t column, size_t z, size_t smax, size_t r1st, s
         }
     }
     else {
-        if (p_m) {
-            table_mem[100 * z + 10 * row + column - 1] = r2st + expr2(smax * smax * z + smax * (row + 1) + column, (smax - column) * r1st + r2st, row + 1, column, z, r1st, r2st, prob_t, prob_i);
-            ImGui::Text("%f", table_mem[100 * z + 10 * row + column - 1]);
-        }
-        else {
-            table_mem[100 * z + 10 * row + column - 1] = r2st + exp[prob_i][smax * smax * z + smax * (row + 1) + column][(smax - column) * r1st + r2st][1];
-            ImGui::Text("%f", table_mem[100 * z + 10 * row + column - 1]);
-        }
+        if (p_m)
+            table_mem[100 * z + 10 * row + column - 1] = r2st + expr2(smax * smax * z + smax * (row + 1) + column, (smax - column) * r1st + r2st, row + 1, column, z, r1st, r2st, r3st, prob_t, prob_i);
+        else table_mem[100 * z + 10 * row + column - 1] = r2st + exp[prob_i][smax * smax * z + smax * (row + 1) + column][(smax - column) * r1st + r2st][1];
+        ImGui::Text("%f", table_mem[100 * z + 10 * row + column - 1]);
         if (row % 2 == 0) {
             ImU32 cell_bg_color = ImGui::GetColorU32(ImVec4(0.28f, 0.28f, 0.68f, 0.65f));
             ImGui::TableSetBgColor(ImGuiTableBgTarget_CellBg, cell_bg_color);
@@ -235,7 +234,7 @@ void FillTable2(size_t row, size_t column, size_t z, size_t smax, size_t r1st, s
     }
 }
 
-void FillTable3(size_t row, size_t column, size_t z, size_t smax, size_t r1st, size_t r2st, size_t r3st, size_t r1pt, size_t r2pt, size_t r3pt, size_t r12pt, size_t r4pt, bool calc_done2, bool p_m, bool pickr1, std::vector<std::vector<std::vector<int>>>& dt, std::vector<std::vector<std::vector<std::vector<long double>>>>& prob_t, int prob_i, std::vector<long double>& table_mem2, std::vector<long double>& table_mem3) {
+void FillTable3(size_t row, size_t column, size_t z, size_t smax, size_t r1st, size_t r2st, size_t r3st, size_t r1pt, size_t r2pt, size_t r3pt, size_t r12pt, size_t r4pt, bool calc_done2, bool pickr1, std::vector<std::vector<std::vector<int>>>& dt, std::vector<std::vector<std::vector<std::vector<long double>>>>& prob_t, int prob_i, std::vector<long double>& table_mem2, std::vector<long double>& table_mem3) {
     if (calc_done2 || table_mem2[100 * z + 10 * row + column - 1] != -1)
         ImGui::Text("%.2f%%\n%.2f%%", table_mem2[100 * z + 10 * row + column - 1], table_mem3[100 * z + 10 * row + column - 1]);
     else {
@@ -250,7 +249,7 @@ void FillTable3(size_t row, size_t column, size_t z, size_t smax, size_t r1st, s
     ColorCell1(row, column, z, smax, r1st, r2st, pickr1, dt, prob_i);
 }
 
-void ShowTables(bool* p_open, bool p_m, bool pickr1, bool &calc_done, bool &calc_done2, size_t s1, size_t smax, int &p, size_t &r1st, size_t &r2st, size_t &r3st, size_t& r1pt, size_t& r2pt, size_t& r3pt, size_t& r12pt, size_t& r4pt, long double base_e[6][231], bool base_d[6][200], std::vector<std::vector<std::vector<int>>>& dt, std::vector<std::vector<std::vector<std::vector<long double>>>>& exp, std::vector<std::vector<std::vector<std::vector<long double>>>>& prob_t, std::vector<long double>& table_mem, std::vector<long double>& table_mem2, std::vector<long double>& table_mem3) {
+void ShowTables(bool* p_open, bool p_m, bool sacrifice, bool pickr1, bool &calc_done, bool &calc_done2, size_t s1, size_t smax, int &p, size_t &r1st, size_t &r2st, size_t &r3st, size_t& r1pt, size_t& r2pt, size_t& r3pt, size_t& r12pt, size_t& r4pt, long double base_e[6][231], bool base_d[6][200], std::vector<std::vector<std::vector<int>>>& dt, std::vector<std::vector<std::vector<std::vector<long double>>>>& exp, std::vector<std::vector<std::vector<std::vector<long double>>>>& prob_t, std::vector<long double>& table_mem, std::vector<long double>& table_mem2, std::vector<long double>& table_mem3) {
     ImGui::SetNextWindowSize(ImVec2(1089, 595), ImGuiCond_FirstUseEver);
     ImVec2 center = ImGui::GetMainViewport()->GetCenter();
     ImGui::SetNextWindowPos(center, ImGuiCond_FirstUseEver, ImVec2(0.5f, 0.5f));
@@ -332,7 +331,6 @@ void ShowTables(bool* p_open, bool p_m, bool pickr1, bool &calc_done, bool &calc
                 ImGui::ColorButton("##ColorButton5", ImVec4(0.7f, 0.3f, 0.3f, 0.65f), flags2);
                 ImGui::SameLine();
                 ImGui::Text("means row 3 is chosen");
-                ImGui::Text("Row 3 successes is 0 since it has no effect on the expected values for the other rows");
                 if (ImGui::Button("Rate##2"))
                     ImGui::OpenPopup("my_select_popup##2");
                 ImGui::SameLine();
@@ -422,6 +420,24 @@ void ShowTables(bool* p_open, bool p_m, bool pickr1, bool &calc_done, bool &calc
                         ImGui::EndPopup();
                     }
                 }
+                ImGui::SameLine();
+                if (ImGui::Button("Row 3 Successes"))
+                    ImGui::OpenPopup("my_select_popup##9");
+                ImGui::SameLine();
+                ImGui::Text("%d", r3st);
+                if (ImGui::BeginPopup("my_select_popup##9")) {
+                    for (int i = 0; i < smax - 1; i++) {
+                        char buf[32];
+                        sprintf(buf, "%d", i);
+                        if (ImGui::Selectable(buf)) {
+                            r3st = i;
+                            calc_done = false;
+                            for (size_t j = 0; j < 1100; j++)
+                                table_mem[j] = -1;
+                        }
+                    }
+                    ImGui::EndPopup();
+                }
                 for (size_t z = 11; z-- > 0; ) {
                     if (smax - 1 < z)
                         continue;
@@ -452,7 +468,7 @@ void ShowTables(bool* p_open, bool p_m, bool pickr1, bool &calc_done, bool &calc
                                     ImGui::Text("n/a");
                                     ImGui::TableSetBgColor(ImGuiTableBgTarget_CellBg, ImGui::GetColorU32(ImVec4(0.19f, 0.19f, 0.2f, 1.0f)));
                                 }
-                                else FillTable2(row, column, z, smax, r1st, r2st, calc_done, p_m, pickr1, base_e, dt, exp, prob_t, (p - 25) / 10, table_mem);
+                                else FillTable2(row, column, z, smax, r1st, r2st, r3st, calc_done, p_m, sacrifice, pickr1, base_e, dt, exp, prob_t, (p - 25) / 10, table_mem);
                                 if (z == 0 && row == 9 && column == 10)
                                     calc_done = true;
                             }
@@ -717,7 +733,7 @@ void ShowTables(bool* p_open, bool p_m, bool pickr1, bool &calc_done, bool &calc
                                     ImGui::Text("n/a\nn/a");
                                     ImGui::TableSetBgColor(ImGuiTableBgTarget_CellBg, ImGui::GetColorU32(ImVec4(0.19f, 0.19f, 0.2f, 1.0f)));
                                 }
-                                else FillTable3(row, column, z, smax, r1st, r2st, r3st, r1pt, r2pt, r3pt, r12pt, r4pt, calc_done2, p_m, pickr1, dt, prob_t, (p - 25) / 10, table_mem2, table_mem3);
+                                else FillTable3(row, column, z, smax, r1st, r2st, r3st, r1pt, r2pt, r3pt, r12pt, r4pt, calc_done2, pickr1, dt, prob_t, (p - 25) / 10, table_mem2, table_mem3);
                                 if (z == 0 && row == 9 && column == 10)
                                     calc_done2 = true;
                             }
@@ -808,16 +824,16 @@ int main(int, char**) {
     //Certain variables used in applied settings will have 'a' at the end such as pickr1 to pickr1a
     //Certain variables used in table window will have 't' at the end
     ImVec4 clear_color = ImVec4(0.0f, 0.0f, 0.0f, 1.00f);
-    bool pickr1 = true, pickr2 = false, p_m = false, c_m = false, init = false, init2 = false, options = true, enable_p = false, calc_done = false;
-    bool r1sh[10]{}, r2sh[10]{}, r3sh[10]{}, show_table = false, p_ma = false, pickr1a = true, c_ma = false, psc = false, calc_cm = false, calc_pm = false, calc_done2 = false;
+    bool pickr1 = true, pickr2 = false, p_m = false, c_m = false, init = false, init2 = false, options = true, enable_p = false, calc_done = false, sacrifice = false, sacrificea = false;
+    bool r1sh[10]{}, r2sh[10]{}, r3sh[10]{}, show_table = false, p_ma = false, pickr1a = true, c_ma = false, psc = false, calc_cm = false, calc_pm = false, calc_done2 = false, calc_sac = false;
     ImGuiWindowFlags window_flags = ImGuiWindowFlags_NoTitleBar;
     ImGuiWindowFlags window_flags2 = ImGuiWindowFlags_NoDecoration | ImGuiWindowFlags_AlwaysAutoResize | ImGuiWindowFlags_NoSavedSettings | ImGuiWindowFlags_NoFocusOnAppearing | ImGuiWindowFlags_NoNav | ImGuiWindowFlags_NoMove;
     int p = 75, choice = 0, p2 = 45;
-    size_t start1 = 0, start2 = 0, smax = 11, r1s = 0, r2s = 0, r3s = 0, row1 = 0, row2 = 0, row3 = 0, r1c = 0, r2c = 0, r12pt = 0, r4pt = 0;
+    size_t start1 = 0, start2 = 0, smax = 11, r1s = 0, r2s = 0, r3s = 0, row1 = 0, row2 = 0, row3 = 0, r1c = 0, r2c = 0, r3c = 0, r12pt = 0, r4pt = 0;
     size_t r1p = 0, r2p = 0, r3p = 0, r12p = 0, r4p = 0, r1st = 0, r2st = 0, r3st = 0, smaxa = 0, s1a = 0, s1 = 10, r1pt = 0, r2pt = 0, r3pt = 0;
     int hist[31]{};
     long double w1 = 0.5, w2 = 0.5, r1e = 0, r2e = 0, r3e = 0, prob = 0, prob2 = 0, w2a = 0;
-    float sz2 = 1.0f, x = 0.0f, y = 0.0f, progress = 0.0f, dyd = 51.0f, dxd = 4.0f, f1 = 0.5f;
+    float sz2 = 1.0f, x = 0.0f, y = 0.0f, progress = 0.0f, dyd = 51.0f, dxd = 0.0f, f1 = 0.5f;
     const float sz = 48.0f, spacing = 10.0f;
     long double base_e[6][231]; //base expected value table
     bool base_d[6][200]{}; //base decision tables
@@ -847,7 +863,7 @@ int main(int, char**) {
         
         if (ImGui::BeginMainMenuBar()) {
             if (ImGui::BeginMenu("File")) {
-                if (init && calc_cm == calc_pm)
+                if (init && calc_cm == calc_pm && calc_cm == calc_sac)
                     ImGui::MenuItem("Show Tables", NULL, &show_table);
                 if (ImGui::MenuItem("Quit"))
                     glfwSetWindowShouldClose(window, GLFW_TRUE);
@@ -855,7 +871,52 @@ int main(int, char**) {
             }
             ImGui::EndMainMenuBar();
         }
-        if (calc_cm) {
+        if (calc_sac) {
+            ImVec2 center = ImGui::GetMainViewport()->GetCenter();
+            ImGui::SetNextWindowPos(center, ImGuiCond_Appearing, ImVec2(0.5f, 0.5f));
+            ImGui::SetNextWindowBgAlpha(0.35f); // Transparent background
+            if (ImGui::Begin("calculating3", NULL, window_flags2)) {
+                if (progress == 0.0f) {
+                    initcalcTable2(smax, base_d, dt, exp, prob_t);
+                    progress = 0.01f;
+                }
+                else {
+                    calcTable3(start1, start2, r1c, r2c, r3c, smax, base_d, w1, dt, exp, prob_t);
+                    start2++;
+                    if (start2 == smax) {
+                        start2 = 1;
+                        start1++;
+                        if (start1 == smax) {
+                            calc_sac = false;
+                            start2 = 1;
+                            choice = dt[5][(smax * smax + smax + 1) * s1][0];
+                            r1e = exp[5][(smax * smax + smax + 1) * s1][0][0];
+                            r3e = expr3((smax * smax + smax + 1) * s1, 0, s1, s1, s1, 0, 0, 0, prob_t, 5);
+                            r2e = expr2((smax * smax + smax + 1) * s1, 0, s1, s1, s1, 0, 0, 0, prob_t, 5);
+                            func11(r12p, r4p, prob2, (smax * smax + smax + 1) * s1, 0, s1, s1, s1, r1s, r2s, r3s, prob_t, 5);
+                            func12(r3p, r1p, r2p, prob, (smax * smax + smax + 1) * s1, 0, s1, s1, s1, r1s, r2s, r3s, prob_t, 5);
+                            smaxa = smax;
+                            s1a = s1;
+                            p_ma = p_m;
+                            pickr1a = pickr1;
+                            w2a = w2;
+                            c_ma = c_m;
+                            sacrificea = sacrifice;
+                        }
+                    }
+                    progress += 0.99f / (static_cast<float>(smax * (smax - 1)));
+                }
+                ImGui::ProgressBar(progress, ImVec2(0.0f, 0.0f));
+                ImGui::SameLine(0.0f, ImGui::GetStyle().ItemInnerSpacing.x);
+                ImGui::Text("calculating");
+                if (start1 == smax) {
+                    start1 = 0;
+                    progress = 0.0f;
+                }
+            }
+            ImGui::End();
+        }
+        else if (calc_cm) {
             ImVec2 center = ImGui::GetMainViewport()->GetCenter();
             ImGui::SetNextWindowPos(center, ImGuiCond_Appearing, ImVec2(0.5f, 0.5f));
             ImGui::SetNextWindowBgAlpha(0.35f); // Transparent background
@@ -876,7 +937,7 @@ int main(int, char**) {
                             choice = dt[5][(smax * smax + smax + 1) * s1][0];
                             r1e = exp[5][(smax * smax + smax + 1) * s1][0][0];
                             r3e = base_e[5][23 * s1];
-                            r2e = expr2((smax * smax + smax + 1) * s1, 0, s1, s1, s1, 0, 0, prob_t, 5);
+                            r2e = expr2((smax * smax + smax + 1) * s1, 0, s1, s1, s1, 0, 0, 0, prob_t, 5);
                             func11(r12p, r4p, prob2, (smax * smax + smax + 1) * s1, 0, s1, s1, s1, r1s, r2s, r3s, prob_t, 5);
                             func12(r3p, r1p, r2p, prob, (smax * smax + smax + 1) * s1, 0, s1, s1, s1, r1s, r2s, r3s, prob_t, 5);
                             smaxa = smax;
@@ -885,6 +946,7 @@ int main(int, char**) {
                             pickr1a = pickr1;
                             w2a = w2;
                             c_ma = c_m;
+                            sacrificea = sacrifice;
                         }
                     }
                     progress += 0.99f / (static_cast<float>(smax * (smax - 1)));
@@ -920,7 +982,7 @@ int main(int, char**) {
                             choice = dt[5][(smax * smax + smax + 1) * s1][0];
                             r1e = exp[5][(smax * smax + smax + 1) * s1][0][0];
                             r3e = base_e[5][23 * s1];
-                            r2e = expr2((smax * smax + smax + 1) * s1, 0, s1, s1, s1, 0, 0, prob_t, 5);
+                            r2e = expr2((smax * smax + smax + 1) * s1, 0, s1, s1, s1, 0, 0, 0, prob_t, 5);
                             func11(r12p, r4p, prob2, (smax* smax + smax + 1)* s1, 0, s1, s1, s1, r1s, r2s, r3s, prob_t, 5);
                             func12(r3p, r1p, r2p, prob, (smax* smax + smax + 1)* s1, 0, s1, s1, s1, r1s, r2s, r3s, prob_t, 5);
                             smaxa = smax;
@@ -929,6 +991,7 @@ int main(int, char**) {
                             pickr1a = pickr1;
                             w2a = w2;
                             c_ma = c_m;
+                            sacrificea = sacrifice;
                         }
                     }
                     progress += 0.99f / (static_cast<float>(smax * (smax - 1)));
@@ -960,19 +1023,16 @@ int main(int, char**) {
             ImGui::Text("(about 3.5 GB of RAM)");
             ImGui::End();
         }
-        else if (init && calc_cm == calc_pm) {
+        else if (init && calc_cm == calc_pm && calc_cm == calc_sac) {
             if (show_table)
-                ShowTables(&show_table, p_ma, pickr1a, calc_done, calc_done2, s1a, smaxa, p2, r1st, r2st, r3st, r1pt, r2pt, r3pt, r12pt, r4pt, base_e, base_d, dt, exp, prob_t, table_mem, table_mem2, table_mem3);
-            ImGui::SetNextWindowSize(ImVec2(775, 466), ImGuiCond_FirstUseEver);
+                ShowTables(&show_table, p_ma, sacrificea, pickr1a, calc_done, calc_done2, s1a, smaxa, p2, r1st, r2st, r3st, r1pt, r2pt, r3pt, r12pt, r4pt, base_e, base_d, dt, exp, prob_t, table_mem, table_mem2, table_mem3);
+            ImGui::SetNextWindowSize(ImVec2(789, 466), ImGuiCond_FirstUseEver);
             ImVec2 center = ImGui::GetMainViewport()->GetCenter();
             ImGui::SetNextWindowPos(center, ImGuiCond_FirstUseEver, ImVec2(0.5f, 0.5f));
             ImGui::Begin("Ability Stone Calculator", NULL, window_flags);
             ImDrawList* draw_list = ImGui::GetWindowDrawList();
             ImGui::Text("Configure the settings for probability mode, weight of row 1, pick row x in a tie, and slots per row.");
             ImGui::Text("Each time you are done changing these settings, click apply settings.");
-            //static float xd = 10.0f, yd = 0.0f;
-            //ImGui::InputScalar("xd", ImGuiDataType_Float, &xd, NULL, NULL, "%f");
-            //ImGui::InputScalar("yd", ImGuiDataType_Float, &yd, NULL, NULL, "%f");
             ImGui::PushItemWidth(70.f);
             if (enable_p) {
                 if (ImGui::Checkbox("probability mode", &p_m)) {
@@ -988,6 +1048,7 @@ int main(int, char**) {
                         r4p = 0;
                         r1c = 0;
                         r2c = 0;
+                        r3c = 0;
                     }
                 }
                 ImGui::SameLine();
@@ -1008,8 +1069,9 @@ int main(int, char**) {
                 }
                 if (p_m) {
                     smax = s1 + 1;
-                    if (c_m)
-                        calc_cm = true;
+                    if (c_m) {
+                        sacrifice ? calc_sac = true : calc_cm = true;
+                    }
                     else {
                         calc_pm = true;
                         calcTable(smax, base_d, w1, dt, exp);
@@ -1027,6 +1089,7 @@ int main(int, char**) {
                     pickr1a = pickr1;
                     w2a = w2;
                     c_ma = c_m;
+                    sacrificea = sacrifice;
                 }
             }
             if (p_m) {
@@ -1035,18 +1098,12 @@ int main(int, char**) {
                     if (!c_m) {
                         r1c = 0;
                         r2c = 0;
+                        r3c = 0;
                     }
                 }
                 ImGui::SameLine();
                 HelpMarker("Weights are used after conditions are met.");
             }
-            //if (ImGui::InputScalar("weight of row 1", ImGuiDataType_Double, &w2, NULL, NULL, "%f")) {
-            //    if (w2 < 0)
-            //        w2 = 0;
-            //    else if (w2 > 1)
-            //        w2 = 1;
-            //    pickr1 ? w1 = w2 : w1 = 1 - w2;
-            //}
             ImGui::PopItemWidth();
             ImGui::PushItemWidth(200.f);
             if (ImGui::SliderFloat("weight of row 1", &f1, 0.0f, 1.0f)) {
@@ -1059,6 +1116,18 @@ int main(int, char**) {
             }
             ImGui::SameLine();
             HelpMarker("Slide to value or Ctrl+left click to enter a value.\nWeight of row 2 is 1 minus this value.");
+            if (p_m && c_m) {
+                ImGui::SameLine();
+                if (ImGui::Checkbox("maximize probabilities by sacrificing expected values", &sacrifice)) {
+                    if (!sacrifice) {
+                        r1c = 0;
+                        r2c = 0;
+                        r3c = 0;
+                    }
+                }
+                ImGui::SameLine();
+                HelpMarker("This is good if you will not use stones that don't meet the conditions.");
+            }
             if (ImGui::Button("slots per row"))
                 ImGui::OpenPopup("my_select_popup1");
             ImGui::SameLine();
@@ -1088,23 +1157,25 @@ int main(int, char**) {
                                         r1c = s1;
                                     if (r2c > s1)
                                         r2c = s1;
+                                    if (sacrifice && r3c > s1)
+                                        r3c = s1;
                                 }
                                 if (s1 <= s1a && row1 <= s1 && row2 <= s1 && row3 <= s1) {
                                     psc = true; //this variable is only true under these conditions, which is used to avoid recalculation
-                                    update_changes(prob, prob2, r1p, r2p, r3p, r12p, r4p, smaxa, p, choice, s1, row3, r1s, r2s, r3s, row1, row2, r1e, r2e, r3e, p_ma, base_e, dt, exp, prob_t);
+                                    update_changes(prob, prob2, r1p, r2p, r3p, r12p, r4p, smaxa, p, choice, s1, row3, r1s, r2s, r3s, row1, row2, r1e, r2e, r3e, p_ma, sacrificea, base_e, dt, exp, prob_t);
                                 }
                                 else {
                                     psc = false;
-                                    PerformReset(hist, smaxa, s1a, pickr1a, p_ma, prob, prob2, r1p, r2p, r3p, r12p, r4p, r1s, r2s, r3s, row1, row2, row3, p, r1sh, r2sh, r3sh, choice, r1e, r2e, r3e, base_e, dt, exp, prob_t);
+                                    PerformReset(hist, smaxa, s1a, pickr1a, p_ma, sacrificea, prob, prob2, r1p, r2p, r3p, r12p, r4p, r1s, r2s, r3s, row1, row2, row3, p, r1sh, r2sh, r3sh, choice, r1e, r2e, r3e, base_e, dt, exp, prob_t);
                                 }
                             }
                             else if (row1 > s1 || row2 > s1 || row3 > s1) {
                                 psc = false;
-                                PerformReset(hist, smaxa, s1a, pickr1a, p_ma, prob, prob2, r1p, r2p, r3p, r12p, r4p, r1s, r2s, r3s, row1, row2, row3, p, r1sh, r2sh, r3sh, choice, r1e, r2e, r3e, base_e, dt, exp, prob_t);
+                                PerformReset(hist, smaxa, s1a, pickr1a, p_ma, sacrificea, prob, prob2, r1p, r2p, r3p, r12p, r4p, r1s, r2s, r3s, row1, row2, row3, p, r1sh, r2sh, r3sh, choice, r1e, r2e, r3e, base_e, dt, exp, prob_t);
                             }
                             else {
                                 psc = false;
-                                update_changes(prob, prob2, r1p, r2p, r3p, r12p, r4p, smaxa, p, choice, s1, row3, r1s, r2s, r3s, row1, row2, r1e, r2e, r3e, p_ma, base_e, dt, exp, prob_t);
+                                update_changes(prob, prob2, r1p, r2p, r3p, r12p, r4p, smaxa, p, choice, s1, row3, r1s, r2s, r3s, row1, row2, r1e, r2e, r3e, p_ma, sacrificea, base_e, dt, exp, prob_t);
                             }
                         }
                     }
@@ -1114,10 +1185,10 @@ int main(int, char**) {
             if (ImGui::Button("Reset")) {
                 if (p_ma) {
                     if (psc)
-                        PerformReset(hist, smaxa, s1, pickr1a, p_ma, prob, prob2, r1p, r2p, r3p, r12p, r4p, r1s, r2s, r3s, row1, row2, row3, p, r1sh, r2sh, r3sh, choice, r1e, r2e, r3e, base_e, dt, exp, prob_t);
-                    else PerformReset(hist, smaxa, s1a, pickr1a, p_ma, prob, prob2, r1p, r2p, r3p, r12p, r4p, r1s, r2s, r3s, row1, row2, row3, p, r1sh, r2sh, r3sh, choice, r1e, r2e, r3e, base_e, dt, exp, prob_t);
+                        PerformReset(hist, smaxa, s1, pickr1a, p_ma, sacrificea, prob, prob2, r1p, r2p, r3p, r12p, r4p, r1s, r2s, r3s, row1, row2, row3, p, r1sh, r2sh, r3sh, choice, r1e, r2e, r3e, base_e, dt, exp, prob_t);
+                    else PerformReset(hist, smaxa, s1a, pickr1a, p_ma, sacrificea, prob, prob2, r1p, r2p, r3p, r12p, r4p, r1s, r2s, r3s, row1, row2, row3, p, r1sh, r2sh, r3sh, choice, r1e, r2e, r3e, base_e, dt, exp, prob_t);
                 }
-                else PerformReset(hist, smaxa, s1, pickr1a, p_ma, prob, prob2, r1p, r2p, r3p, r12p, r4p, r1s, r2s, r3s, row1, row2, row3, p, r1sh, r2sh, r3sh, choice, r1e, r2e, r3e, base_e, dt, exp, prob_t);
+                else PerformReset(hist, smaxa, s1, pickr1a, p_ma, sacrificea, prob, prob2, r1p, r2p, r3p, r12p, r4p, r1s, r2s, r3s, row1, row2, row3, p, r1sh, r2sh, r3sh, choice, r1e, r2e, r3e, base_e, dt, exp, prob_t);
             }
             ImGui::SameLine(0.0f, ImGui::GetStyle().ItemInnerSpacing.x);
             ImGui::Dummy(ImVec2(200.0f, 0.0f));
@@ -1163,10 +1234,10 @@ int main(int, char**) {
                     hist[0]--;
                     if (p_ma) {
                         if (psc)
-                            update_changes(prob, prob2, r1p, r2p, r3p, r12p, r4p, smaxa, p, choice, s1, row3, r1s, r2s, r3s, row1, row2, r1e, r2e, r3e, p_ma, base_e, dt, exp, prob_t);
-                        else update_changes(prob, prob2, r1p, r2p, r3p, r12p, r4p, smaxa, p, choice, s1a, row3, r1s, r2s, r3s, row1, row2, r1e, r2e, r3e, p_ma, base_e, dt, exp, prob_t);
+                            update_changes(prob, prob2, r1p, r2p, r3p, r12p, r4p, smaxa, p, choice, s1, row3, r1s, r2s, r3s, row1, row2, r1e, r2e, r3e, p_ma, sacrificea, base_e, dt, exp, prob_t);
+                        else update_changes(prob, prob2, r1p, r2p, r3p, r12p, r4p, smaxa, p, choice, s1a, row3, r1s, r2s, r3s, row1, row2, r1e, r2e, r3e, p_ma, sacrificea, base_e, dt, exp, prob_t);
                     }
-                    else update_changes(prob, prob2, r1p, r2p, r3p, r12p, r4p, smaxa, p, choice, s1, row3, r1s, r2s, r3s, row1, row2, r1e, r2e, r3e, p_ma, base_e, dt, exp, prob_t);
+                    else update_changes(prob, prob2, r1p, r2p, r3p, r12p, r4p, smaxa, p, choice, s1, row3, r1s, r2s, r3s, row1, row2, r1e, r2e, r3e, p_ma, sacrificea, base_e, dt, exp, prob_t);
                 }
             }
             ImGui::SameLine(0.0f, ImGui::GetStyle().ItemInnerSpacing.x);
@@ -1185,10 +1256,10 @@ int main(int, char**) {
                         if (s1a > 0) {
                             if (p_ma) {
                                 if (psc)
-                                    update_changes(prob, prob2, r1p, r2p, r3p, r12p, r4p, smaxa, p, choice, s1, row3, r1s, r2s, r3s, row1, row2, r1e, r2e, r3e, p_ma, base_e, dt, exp, prob_t);
-                                else update_changes(prob, prob2, r1p, r2p, r3p, r12p, r4p, smaxa, p, choice, s1a, row3, r1s, r2s, r3s, row1, row2, r1e, r2e, r3e, p_ma, base_e, dt, exp, prob_t);
+                                    update_changes(prob, prob2, r1p, r2p, r3p, r12p, r4p, smaxa, p, choice, s1, row3, r1s, r2s, r3s, row1, row2, r1e, r2e, r3e, p_ma, sacrificea, base_e, dt, exp, prob_t);
+                                else update_changes(prob, prob2, r1p, r2p, r3p, r12p, r4p, smaxa, p, choice, s1a, row3, r1s, r2s, r3s, row1, row2, r1e, r2e, r3e, p_ma, sacrificea, base_e, dt, exp, prob_t);
                             }
-                            else update_changes(prob, prob2, r1p, r2p, r3p, r12p, r4p, smaxa, p, choice, s1, row3, r1s, r2s, r3s, row1, row2, r1e, r2e, r3e, p_ma, base_e, dt, exp, prob_t);
+                            else update_changes(prob, prob2, r1p, r2p, r3p, r12p, r4p, smaxa, p, choice, s1, row3, r1s, r2s, r3s, row1, row2, r1e, r2e, r3e, p_ma, sacrificea, base_e, dt, exp, prob_t);
                         }
                     }
                 }
@@ -1252,10 +1323,10 @@ int main(int, char**) {
                         x += sz + spacing - 0.4f;
                     }
                 }
-                dyd = 51.0f;
                 dxd = 0.0f;
                 if (p_m && c_m)
                     dyd = 0.0f;
+                else dyd = 51.0f;
                 if (n == 0) {
                     ImGui::Dummy(ImVec2(0.0f, 0.0f));
                     ImGui::SameLine();
@@ -1302,10 +1373,10 @@ int main(int, char**) {
                                 p -= 10;
                             if (p_ma) {
                                 if (psc)
-                                    update_changes(prob, prob2, r1p, r2p, r3p, r12p, r4p, smaxa, p, choice, s1, row3, r1s, r2s, r3s, row1, row2, r1e, r2e, r3e, p_ma, base_e, dt, exp, prob_t);
-                                else update_changes(prob, prob2, r1p, r2p, r3p, r12p, r4p, smaxa, p, choice, s1a, row3, r1s, r2s, r3s, row1, row2, r1e, r2e, r3e, p_ma, base_e, dt, exp, prob_t);
+                                    update_changes(prob, prob2, r1p, r2p, r3p, r12p, r4p, smaxa, p, choice, s1, row3, r1s, r2s, r3s, row1, row2, r1e, r2e, r3e, p_ma, sacrificea, base_e, dt, exp, prob_t);
+                                else update_changes(prob, prob2, r1p, r2p, r3p, r12p, r4p, smaxa, p, choice, s1a, row3, r1s, r2s, r3s, row1, row2, r1e, r2e, r3e, p_ma, sacrificea, base_e, dt, exp, prob_t);
                             }
-                            else update_changes(prob, prob2, r1p, r2p, r3p, r12p, r4p, smaxa, p, choice, s1, row3, r1s, r2s, r3s, row1, row2, r1e, r2e, r3e, p_ma, base_e, dt, exp, prob_t);
+                            else update_changes(prob, prob2, r1p, r2p, r3p, r12p, r4p, smaxa, p, choice, s1, row3, r1s, r2s, r3s, row1, row2, r1e, r2e, r3e, p_ma, sacrificea, base_e, dt, exp, prob_t);
                         }
                     }
                     ImGui::SameLine();
@@ -1327,10 +1398,10 @@ int main(int, char**) {
                                 p += 10;
                             if (p_ma) {
                                 if (psc)
-                                    update_changes(prob, prob2, r1p, r2p, r3p, r12p, r4p, smaxa, p, choice, s1, row3, r1s, r2s, r3s, row1, row2, r1e, r2e, r3e, p_ma, base_e, dt, exp, prob_t);
-                                else update_changes(prob, prob2, r1p, r2p, r3p, r12p, r4p, smaxa, p, choice, s1a, row3, r1s, r2s, r3s, row1, row2, r1e, r2e, r3e, p_ma, base_e, dt, exp, prob_t);
+                                    update_changes(prob, prob2, r1p, r2p, r3p, r12p, r4p, smaxa, p, choice, s1, row3, r1s, r2s, r3s, row1, row2, r1e, r2e, r3e, p_ma, sacrificea, base_e, dt, exp, prob_t);
+                                else update_changes(prob, prob2, r1p, r2p, r3p, r12p, r4p, smaxa, p, choice, s1a, row3, r1s, r2s, r3s, row1, row2, r1e, r2e, r3e, p_ma, sacrificea, base_e, dt, exp, prob_t);
                             }
-                            else update_changes(prob, prob2, r1p, r2p, r3p, r12p, r4p, smaxa, p, choice, s1, row3, r1s, r2s, r3s, row1, row2, r1e, r2e, r3e, p_ma, base_e, dt, exp, prob_t);
+                            else update_changes(prob, prob2, r1p, r2p, r3p, r12p, r4p, smaxa, p, choice, s1, row3, r1s, r2s, r3s, row1, row2, r1e, r2e, r3e, p_ma, sacrificea, base_e, dt, exp, prob_t);
                         }
                     }
                     if (p_m && c_m) {
@@ -1401,10 +1472,10 @@ int main(int, char**) {
                                 p -= 10;
                             if (p_ma) {
                                 if (psc)
-                                    update_changes(prob, prob2, r1p, r2p, r3p, r12p, r4p, smaxa, p, choice, s1, row3, r1s, r2s, r3s, row1, row2, r1e, r2e, r3e, p_ma, base_e, dt, exp, prob_t);
-                                else update_changes(prob, prob2, r1p, r2p, r3p, r12p, r4p, smaxa, p, choice, s1a, row3, r1s, r2s, r3s, row1, row2, r1e, r2e, r3e, p_ma, base_e, dt, exp, prob_t);
+                                    update_changes(prob, prob2, r1p, r2p, r3p, r12p, r4p, smaxa, p, choice, s1, row3, r1s, r2s, r3s, row1, row2, r1e, r2e, r3e, p_ma, sacrificea, base_e, dt, exp, prob_t);
+                                else update_changes(prob, prob2, r1p, r2p, r3p, r12p, r4p, smaxa, p, choice, s1a, row3, r1s, r2s, r3s, row1, row2, r1e, r2e, r3e, p_ma, sacrificea, base_e, dt, exp, prob_t);
                             }
-                            else update_changes(prob, prob2, r1p, r2p, r3p, r12p, r4p, smaxa, p, choice, s1, row3, r1s, r2s, r3s, row1, row2, r1e, r2e, r3e, p_ma, base_e, dt, exp, prob_t);
+                            else update_changes(prob, prob2, r1p, r2p, r3p, r12p, r4p, smaxa, p, choice, s1, row3, r1s, r2s, r3s, row1, row2, r1e, r2e, r3e, p_ma, sacrificea, base_e, dt, exp, prob_t);
                         }
                     }
                     ImGui::SameLine();
@@ -1426,10 +1497,10 @@ int main(int, char**) {
                                 p += 10;
                             if (p_ma) {
                                 if (psc)
-                                    update_changes(prob, prob2, r1p, r2p, r3p, r12p, r4p, smaxa, p, choice, s1, row3, r1s, r2s, r3s, row1, row2, r1e, r2e, r3e, p_ma, base_e, dt, exp, prob_t);
-                                else update_changes(prob, prob2, r1p, r2p, r3p, r12p, r4p, smaxa, p, choice, s1a, row3, r1s, r2s, r3s, row1, row2, r1e, r2e, r3e, p_ma, base_e, dt, exp, prob_t);
+                                    update_changes(prob, prob2, r1p, r2p, r3p, r12p, r4p, smaxa, p, choice, s1, row3, r1s, r2s, r3s, row1, row2, r1e, r2e, r3e, p_ma, sacrificea, base_e, dt, exp, prob_t);
+                                else update_changes(prob, prob2, r1p, r2p, r3p, r12p, r4p, smaxa, p, choice, s1a, row3, r1s, r2s, r3s, row1, row2, r1e, r2e, r3e, p_ma, sacrificea, base_e, dt, exp, prob_t);
                             }
-                            else update_changes(prob, prob2, r1p, r2p, r3p, r12p, r4p, smaxa, p, choice, s1, row3, r1s, r2s, r3s, row1, row2, r1e, r2e, r3e, p_ma, base_e, dt, exp, prob_t);
+                            else update_changes(prob, prob2, r1p, r2p, r3p, r12p, r4p, smaxa, p, choice, s1, row3, r1s, r2s, r3s, row1, row2, r1e, r2e, r3e, p_ma, sacrificea, base_e, dt, exp, prob_t);
                         }
                     }
                     if (p_m && c_m) {
@@ -1467,7 +1538,9 @@ int main(int, char**) {
             ImGui::Dummy(ImVec2(165.0f, 0.0f));
             ImGui::SameLine();
             ImGui::Text("x%u", r3s);
-            ImGui::Dummy(ImVec2(585.0f, 52.0f));
+            if (p_m && c_m && sacrifice)
+                ImGui::Dummy(ImVec2(585.0f, 0.0f));
+            else ImGui::Dummy(ImVec2(585.0f, 52.0f));
             ImGui::SameLine();
             if (ImGui::Button("Success##1")) {
                 if (s1a > 0 && row3 < s1) {
@@ -1480,10 +1553,10 @@ int main(int, char**) {
                         p -= 10;
                     if (p_ma) {
                         if (psc)
-                            update_changes(prob, prob2, r1p, r2p, r3p, r12p, r4p, smaxa, p, choice, s1, row3, r1s, r2s, r3s, row1, row2, r1e, r2e, r3e, p_ma, base_e, dt, exp, prob_t);
-                        else update_changes(prob, prob2, r1p, r2p, r3p, r12p, r4p, smaxa, p, choice, s1a, row3, r1s, r2s, r3s, row1, row2, r1e, r2e, r3e, p_ma, base_e, dt, exp, prob_t);
+                            update_changes(prob, prob2, r1p, r2p, r3p, r12p, r4p, smaxa, p, choice, s1, row3, r1s, r2s, r3s, row1, row2, r1e, r2e, r3e, p_ma, sacrificea, base_e, dt, exp, prob_t);
+                        else update_changes(prob, prob2, r1p, r2p, r3p, r12p, r4p, smaxa, p, choice, s1a, row3, r1s, r2s, r3s, row1, row2, r1e, r2e, r3e, p_ma, sacrificea, base_e, dt, exp, prob_t);
                     }
-                    else update_changes(prob, prob2, r1p, r2p, r3p, r12p, r4p, smaxa, p, choice, s1, row3, r1s, r2s, r3s, row1, row2, r1e, r2e, r3e, p_ma, base_e, dt, exp, prob_t);
+                    else update_changes(prob, prob2, r1p, r2p, r3p, r12p, r4p, smaxa, p, choice, s1, row3, r1s, r2s, r3s, row1, row2, r1e, r2e, r3e, p_ma, sacrificea, base_e, dt, exp, prob_t);
                 }
             }
             ImGui::SameLine();
@@ -1497,10 +1570,22 @@ int main(int, char**) {
                         p += 10;
                     if (p_ma) {
                         if (psc)
-                            update_changes(prob, prob2, r1p, r2p, r3p, r12p, r4p, smaxa, p, choice, s1, row3, r1s, r2s, r3s, row1, row2, r1e, r2e, r3e, p_ma, base_e, dt, exp, prob_t);
-                        else update_changes(prob, prob2, r1p, r2p, r3p, r12p, r4p, smaxa, p, choice, s1a, row3, r1s, r2s, r3s, row1, row2, r1e, r2e, r3e, p_ma, base_e, dt, exp, prob_t);
+                            update_changes(prob, prob2, r1p, r2p, r3p, r12p, r4p, smaxa, p, choice, s1, row3, r1s, r2s, r3s, row1, row2, r1e, r2e, r3e, p_ma, sacrificea, base_e, dt, exp, prob_t);
+                        else update_changes(prob, prob2, r1p, r2p, r3p, r12p, r4p, smaxa, p, choice, s1a, row3, r1s, r2s, r3s, row1, row2, r1e, r2e, r3e, p_ma, sacrificea, base_e, dt, exp, prob_t);
                     }
-                    else update_changes(prob, prob2, r1p, r2p, r3p, r12p, r4p, smaxa, p, choice, s1, row3, r1s, r2s, r3s, row1, row2, r1e, r2e, r3e, p_ma, base_e, dt, exp, prob_t);
+                    else update_changes(prob, prob2, r1p, r2p, r3p, r12p, r4p, smaxa, p, choice, s1, row3, r1s, r2s, r3s, row1, row2, r1e, r2e, r3e, p_ma, sacrificea, base_e, dt, exp, prob_t);
+                }
+            }
+            if (p_m && c_m && sacrifice) {
+                ImGui::Dummy(ImVec2(585.0f, 29.0f));
+                ImGui::SameLine();
+                ImGui::Text("row 3 <=");
+                ImGui::SameLine();
+                if (ImGui::InputScalar("##7", ImGuiDataType_U8, &r3c, NULL, NULL, "%u")) {
+                    if (r3c < 0)
+                        r3c = 0;
+                    else if (r3c > s1)
+                        r3c = s1;
                 }
             }
             y += sz / 2 - 2.0f;
@@ -1617,7 +1702,6 @@ int main(int, char**) {
             if (ImGui::Begin("Initiallizing Tables", NULL, window_flags2)) {
                 if (progress == 0.0f) {
                     calcBaseTable(base_e, base_d);
-                    r3e = base_e[5][23 * s1];
                     progress = 0.01f;
                 }
                 else if (enable_p) {
