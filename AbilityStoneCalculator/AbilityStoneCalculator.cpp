@@ -1057,6 +1057,8 @@ int main(int, char**) {
             }
             if (ImGui::Button("apply settings")) {
                 r1s = 0; r2s = 0; r3s = 0; row1 = 0; row2 = 0; row3 = 0; p = 75; calc_done = false, calc_done2 = false;
+                for (size_t i = 0; i < 31; i++)
+                    hist[i] = 0;
                 for (size_t i = 0; i < 1100; i++) {
                     table_mem[i] = -1;
                     table_mem2[i] = -1;
@@ -1118,7 +1120,7 @@ int main(int, char**) {
             HelpMarker("Slide to value or Ctrl+left click to enter a value.\nWeight of row 2 is 1 minus this value.");
             if (p_m && c_m) {
                 ImGui::SameLine();
-                if (ImGui::Checkbox("maximize probabilities by sacrificing expected values", &sacrifice)) {
+                if (ImGui::Checkbox("increase probability by sacrificing expected values", &sacrifice)) {
                     if (!sacrifice) {
                         r1c = 0;
                         r2c = 0;
@@ -1126,7 +1128,7 @@ int main(int, char**) {
                     }
                 }
                 ImGui::SameLine();
-                HelpMarker("This is good if you will not use stones that don't meet the conditions.");
+                HelpMarker("Increases probability of satisfying the inequalties by decreasing the expected values for successes in row 1 and row 2, which increases the expected value for successes in row 3. This is good if you will not use stones that don't meet the conditions.");
             }
             if (ImGui::Button("slots per row"))
                 ImGui::OpenPopup("my_select_popup1");
@@ -1358,16 +1360,20 @@ int main(int, char**) {
                             if (pickr1a) {
                                 r1sh[row1++] = true;
                                 r1s++;
-                                if (p == 25)
-                                    hist[++hist[0]] = 13;
-                                else hist[++hist[0]] = 11;
+                                if (hist[0] < 30) {
+                                    if (p == 25)
+                                        hist[++hist[0]] = 13;
+                                    else hist[++hist[0]] = 11;
+                                }
                             }
                             else {
                                 r2sh[row2++] = true;
                                 r2s++;
-                                if (p == 25)
-                                    hist[++hist[0]] = 23;
-                                else hist[++hist[0]] = 21;
+                                if (hist[0] < 30) {
+                                    if (p == 25)
+                                        hist[++hist[0]] = 23;
+                                    else hist[++hist[0]] = 21;
+                                }
                             }
                             if (p != 25)
                                 p -= 10;
@@ -1384,15 +1390,19 @@ int main(int, char**) {
                         if (s1a > 0 && row1 * pickr1a + row2 * !pickr1a < s1) {
                             if (pickr1a) {
                                 row1++;
-                                if (p == 75)
-                                    hist[++hist[0]] = 12;
-                                else hist[++hist[0]] = 10;
+                                if (hist[0] < 30) {
+                                    if (p == 75)
+                                        hist[++hist[0]] = 12;
+                                    else hist[++hist[0]] = 10;
+                                }
                             }
                             else {
                                 row2++;
-                                if (p == 75)
-                                    hist[++hist[0]] = 22;
-                                else hist[++hist[0]] = 20;
+                                if (hist[0] < 30) {
+                                    if (p == 75)
+                                        hist[++hist[0]] = 22;
+                                    else hist[++hist[0]] = 20;
+                                }
                             }
                             if (p != 75)
                                 p += 10;
@@ -1457,16 +1467,20 @@ int main(int, char**) {
                             if (pickr1a) {
                                 r2sh[row2++] = true;
                                 r2s++;
-                                if (p == 25)
-                                    hist[++hist[0]] = 23;
-                                else hist[++hist[0]] = 21;
+                                if (hist[0] < 30) {
+                                    if (p == 25)
+                                        hist[++hist[0]] = 23;
+                                    else hist[++hist[0]] = 21;
+                                }
                             }
                             else {
                                 r1sh[row1++] = true;
                                 r1s++;
-                                if (p == 25)
-                                    hist[++hist[0]] = 13;
-                                else hist[++hist[0]] = 11;
+                                if (hist[0] < 30) {
+                                    if (p == 25)
+                                        hist[++hist[0]] = 13;
+                                    else hist[++hist[0]] = 11;
+                                }
                             }
                             if (p != 25)
                                 p -= 10;
@@ -1483,15 +1497,19 @@ int main(int, char**) {
                         if (s1a > 0 && row2 * pickr1a + row1 * !pickr1a < s1) {
                             if (pickr1a) {
                                 row2++;
-                                if (p == 75)
-                                    hist[++hist[0]] = 22;
-                                else hist[++hist[0]] = 20;
+                                if (hist[0] < 30) {
+                                    if (p == 75)
+                                        hist[++hist[0]] = 22;
+                                    else hist[++hist[0]] = 20;
+                                }
                             }
                             else {
                                 row1++;
-                                if (p == 75)
-                                    hist[++hist[0]] = 12;
-                                else hist[++hist[0]] = 10;
+                                if (hist[0] < 30) {
+                                    if (p == 75)
+                                        hist[++hist[0]] = 12;
+                                    else hist[++hist[0]] = 10;
+                                }
                             }
                             if (p != 75)
                                 p += 10;
@@ -1546,9 +1564,11 @@ int main(int, char**) {
                 if (s1a > 0 && row3 < s1) {
                     r3sh[row3++] = true;
                     r3s++;
-                    if (p == 25)
-                        hist[++hist[0]] = 33;
-                    else hist[++hist[0]] = 31;
+                    if (hist[0] < 30) {
+                        if (p == 25)
+                            hist[++hist[0]] = 33;
+                        else hist[++hist[0]] = 31;
+                    }
                     if (p != 25)
                         p -= 10;
                     if (p_ma) {
@@ -1563,9 +1583,11 @@ int main(int, char**) {
             if (ImGui::Button("Fail##1")) {
                 if (s1a > 0 && row3 < s1) {
                     row3++;
-                    if (p == 75)
-                        hist[++hist[0]] = 32;
-                    else hist[++hist[0]] = 30;
+                    if (hist[0] < 30) {
+                        if (p == 75)
+                            hist[++hist[0]] = 32;
+                        else hist[++hist[0]] = 30;
+                    }
                     if (p != 75)
                         p += 10;
                     if (p_ma) {
