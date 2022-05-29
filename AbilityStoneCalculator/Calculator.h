@@ -104,7 +104,7 @@ void calcTable2(size_t r3, size_t r1, size_t r1c, size_t r2c, size_t slots, bool
 
 long double applyconditions2(size_t r1c, size_t r2c, size_t r3c, size_t i, size_t j, size_t coord, size_t r1, size_t r2, size_t r3, size_t r1s, size_t r2s, size_t r3s, std::vector<std::vector<std::vector<std::vector<long double>>>>& prob_t, size_t prob_i);
 
-void func14(size_t r1c, size_t r2c, size_t r3c, size_t slots, size_t r3, size_t r1, size_t r2, size_t r1s, size_t r2s, size_t r3s, long double p, long double w1, std::vector<std::vector<std::vector<int>>>& dt, std::vector<std::vector<std::vector<std::vector<long double>>>>& exp, std::vector<std::vector<std::vector<std::vector<long double>>>>& prob_t, size_t p1, size_t p2, size_t p3);
+void func14(size_t r1c, size_t r2c, size_t r3c, size_t slots, size_t r3, size_t r1, size_t r2, size_t r1s, size_t r2s, size_t r3s, long double p, long double w1, bool base_d[6][200], std::vector<std::vector<std::vector<int>>>& dt, std::vector<std::vector<std::vector<std::vector<long double>>>>& exp, std::vector<std::vector<std::vector<std::vector<long double>>>>& prob_t, size_t p1, size_t p2, size_t p3);
 
 void func15(size_t r1c, size_t r2c, size_t r3c, size_t slots, size_t r3, size_t r1, size_t r2, size_t r1s, size_t r2s, size_t r3s, long double p, long double w1, bool base_d[6][200], std::vector<std::vector<std::vector<int>>>& dt, std::vector<std::vector<std::vector<std::vector<long double>>>>& exp, std::vector<std::vector<std::vector<std::vector<long double>>>>& prob_t, size_t p1, size_t p2, size_t p3);
 

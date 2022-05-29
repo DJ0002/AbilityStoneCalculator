@@ -772,7 +772,7 @@ long double applyconditions2(size_t r1c, size_t r2c, size_t r3c, size_t i, size_
 	return 0;
 }
 
-void func14(size_t r1c, size_t r2c, size_t r3c, size_t slots, size_t r3, size_t r1, size_t r2, size_t r1s, size_t r2s, size_t r3s, long double p, long double w1, std::vector<std::vector<std::vector<int>>>& dt, std::vector<std::vector<std::vector<std::vector<long double>>>>& exp, std::vector<std::vector<std::vector<std::vector<long double>>>>& prob_t, size_t p1, size_t p2, size_t p3) {
+void func14(size_t r1c, size_t r2c, size_t r3c, size_t slots, size_t r3, size_t r1, size_t r2, size_t r1s, size_t r2s, size_t r3s, long double p, long double w1, bool base_d[6][200], std::vector<std::vector<std::vector<int>>>& dt, std::vector<std::vector<std::vector<std::vector<long double>>>>& exp, std::vector<std::vector<std::vector<std::vector<long double>>>>& prob_t, size_t p1, size_t p2, size_t p3) {
 	size_t a = slots * slots * r3 + slots * r1 + r2, b = (slots - r2) * (slots - r1) * r3s + (slots - r2) * r1s + r2s, g = (slots + 1 - r2) * (slots - r1) * r3s + (slots + 1 - r2) * r1s + r2s;
 	size_t d = slots * slots * r3 + slots * (r1 - 1) + r2, e = (slots - r2) * (slots + 1 - r1) * r3s + (slots - r2) * (r1s + 1) + r2s, f = (slots - r2) * (slots + 1 - r1) * r3s + (slots - r2) * r1s + r2s;
 	long double s1 = 0, s2 = 0, s3 = 0, s4 = 0, s5 = 0, s6 = 0;
@@ -811,13 +811,23 @@ void func14(size_t r1c, size_t r2c, size_t r3c, size_t slots, size_t r3, size_t 
 	else if (pp3 > pp1 && pp3 > pp2) {
 		if (dt[p1][a][(slots - r2) * r1s + r2s] == -1) {
 			dt[p1][a][(slots - r2) * r1s + r2s] = 2;
-			exp[p1][a][(slots - r2) * r1s + r2s][0] = p * exp[p2][slots * slots * (r3 - 1) + slots * r1 + r2][(slots - r2) * r1s + r2s][0] + (1 - p) * exp[p3][slots * slots * (r3 - 1) + slots * r1 + r2][(slots - r2) * r1s + r2s][0];
-			exp[p1][a][(slots - r2) * r1s + r2s][1] = p * exp[p2][slots * slots * (r3 - 1) + slots * r1 + r2][(slots - r2) * r1s + r2s][1] + (1 - p) * exp[p3][slots * slots * (r3 - 1) + slots * r1 + r2][(slots - r2) * r1s + r2s][1];
+			exp[p1][a][(slots - r2) * r1s + r2s][0] = p * exp[p2][d1][(slots - r2) * r1s + r2s][0] + (1 - p) * exp[p3][d1][(slots - r2) * r1s + r2s][0];
+			exp[p1][a][(slots - r2) * r1s + r2s][1] = p * exp[p2][d1][(slots - r2) * r1s + r2s][1] + (1 - p) * exp[p3][d1][(slots - r2) * r1s + r2s][1];
 		}
 		for (size_t c = 0; c < (r3 + 1) * (r1 + 1) * (r2 + 1); c++)
 			prob_t[p1][a][b][c] = p * find_prob(d1, e1, c, r1, r2, r3, r1s, r2s, r3s, r1, r2, r3 - 1, r1s, r2s, r3s + 1, prob_t, p2) + (1 - p) * find_prob(d1, b, c, r1, r2, r3, r1s, r2s, r3s, r1, r2, r3 - 1, r1s, r2s, r3s, prob_t, p3);
 	} //if there exists a situation where picking any row gives the same score
-	else func8(r1c, r2c, slots, r3, r1, r2, r1s, r2s, r3s, p, w1, dt, exp, prob_t, p1, p2, p3);
+	else if (r3 == 0 || base_d[p1][20 * (r3 - 1) + r1 + r2 - 1])
+		func8(r1c, r2c, slots, r3, r1, r2, r1s, r2s, r3s, p, w1, dt, exp, prob_t, p1, p2, p3);
+	else {
+		if (dt[p1][a][(slots - r2) * r1s + r2s] == -1) {
+			dt[p1][a][(slots - r2) * r1s + r2s] = 2;
+			exp[p1][a][(slots - r2) * r1s + r2s][0] = p * exp[p2][d1][(slots - r2) * r1s + r2s][0] + (1 - p) * exp[p3][d1][(slots - r2) * r1s + r2s][0];
+			exp[p1][a][(slots - r2) * r1s + r2s][1] = p * exp[p2][d1][(slots - r2) * r1s + r2s][1] + (1 - p) * exp[p3][d1][(slots - r2) * r1s + r2s][1];
+		}
+		for (size_t c = 0; c < (r3 + 1) * (r1 + 1) * (r2 + 1); c++)
+			prob_t[p1][a][b][c] = p * find_prob(d1, e1, c, r1, r2, r3, r1s, r2s, r3s, r1, r2, r3 - 1, r1s, r2s, r3s + 1, prob_t, p2) + (1 - p) * find_prob(d1, b, c, r1, r2, r3, r1s, r2s, r3s, r1, r2, r3 - 1, r1s, r2s, r3s, prob_t, p3);
+	}
 }
 
 void func15(size_t r1c, size_t r2c, size_t r3c, size_t slots, size_t r3, size_t r1, size_t r2, size_t r1s, size_t r2s, size_t r3s, long double p, long double w1, bool base_d[6][200], std::vector<std::vector<std::vector<int>>>& dt, std::vector<std::vector<std::vector<std::vector<long double>>>>& exp, std::vector<std::vector<std::vector<std::vector<long double>>>>& prob_t, size_t p1, size_t p2, size_t p3) {
@@ -828,11 +838,24 @@ void func15(size_t r1c, size_t r2c, size_t r3c, size_t slots, size_t r3, size_t 
 			r2c = r2s + r2;
 		if (r3s + r3 > r3c)
 			r3c = r3s + r3;
-		func14(r1c, r2c, r3c, slots, r3, r1, r2, r1s, r2s, r3s, p, w1, dt, exp, prob_t, p1, p2, p3);
+		func14(r1c, r2c, r3c, slots, r3, r1, r2, r1s, r2s, r3s, p, w1, base_d, dt, exp, prob_t, p1, p2, p3);
 	} //if conditions are already met for both, then use weights (could adjust r1s and/or r2s and/or r3s to a better value that can be met)
-	else if (r1s >= r1c && r2s >= r2c && r3s <= r3c)
-		func8(r1c, r2c, slots, r3, r1, r2, r1s, r2s, r3s, p, w1, dt, exp, prob_t, p1, p2, p3);
-	else func14(r1c, r2c, r3c, slots, r3, r1, r2, r1s, r2s, r3s, p, w1, dt, exp, prob_t, p1, p2, p3);
+	else if (r1s >= r1c && r2s >= r2c && r3s <= r3c) {
+		if (r3 == 0 || base_d[p1][20 * (r3 - 1) + r1 + r2 - 1])
+			func8(r1c, r2c, slots, r3, r1, r2, r1s, r2s, r3s, p, w1, dt, exp, prob_t, p1, p2, p3);
+		else {
+			size_t a = slots * slots * r3 + slots * r1 + r2, b = (slots - r2) * (slots - r1) * r3s + (slots - r2) * r1s + r2s;
+			if (dt[p1][a][(slots - r2) * r1s + r2s] == -1) {
+				dt[p1][a][(slots - r2) * r1s + r2s] = 2;
+				exp[p1][a][(slots - r2) * r1s + r2s][0] = p * exp[p2][slots * slots * (r3 - 1) + slots * r1 + r2][(slots - r2) * r1s + r2s][0] + (1 - p) * exp[p3][slots * slots * (r3 - 1) + slots * r1 + r2][(slots - r2) * r1s + r2s][0];
+				exp[p1][a][(slots - r2) * r1s + r2s][1] = p * exp[p2][slots * slots * (r3 - 1) + slots * r1 + r2][(slots - r2) * r1s + r2s][1] + (1 - p) * exp[p3][slots * slots * (r3 - 1) + slots * r1 + r2][(slots - r2) * r1s + r2s][1];
+			}
+			size_t d = slots * slots * (r3 - 1) + slots * r1 + r2, e = (slots - r2) * (slots - r1) * (r3s + 1) + (slots - r2) * r1s + r2s;
+			for (size_t c = 0; c < (r3 + 1) * (r1 + 1) * (r2 + 1); c++)
+				prob_t[p1][a][b][c] = p * find_prob(d, e, c, r1, r2, r3, r1s, r2s, r3s, r1, r2, r3 - 1, r1s, r2s, r3s + 1, prob_t, p2) + (1 - p) * find_prob(d, b, c, r1, r2, r3, r1s, r2s, r3s, r1, r2, r3 - 1, r1s, r2s, r3s, prob_t, p3);
+		}
+	}
+	else func14(r1c, r2c, r3c, slots, r3, r1, r2, r1s, r2s, r3s, p, w1, base_d, dt, exp, prob_t, p1, p2, p3);
 }
 
 void calcTable3(size_t r3, size_t r1, size_t r1c, size_t r2c, size_t r3c, size_t slots, bool base_d[6][200], long double w1, std::vector<std::vector<std::vector<int>>>& dt, std::vector<std::vector<std::vector<std::vector<long double>>>>& exp, std::vector<std::vector<std::vector<std::vector<long double>>>>& prob_t) {
