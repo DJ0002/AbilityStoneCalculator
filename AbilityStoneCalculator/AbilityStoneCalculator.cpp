@@ -315,6 +315,12 @@ void ShowTables(bool* p_open, bool p_m, bool sacrifice, bool pickr1, bool &calc_
         if (ImGui::BeginTabItem("Detailed Tables")) {
             ImGui::Text("apply settings from other window to fill in the tables");
             if (s1 > 0) {
+                if (r1st > smax - 2)
+                    r1st = smax - 2;
+                if (r2st > smax - 2)
+                    r2st = smax - 2;
+                if (r3st > smax - 1)
+                    r3st = smax - 1;
                 ImGui::Text("r1 is the total remaining slots from row 1");
                 ImGui::Text("r2 is the total remaining slots from row 2");
                 ImGui::Text("r3 is the total remaining slots from row 3");
@@ -426,7 +432,7 @@ void ShowTables(bool* p_open, bool p_m, bool sacrifice, bool pickr1, bool &calc_
                 ImGui::SameLine();
                 ImGui::Text("%d", r3st);
                 if (ImGui::BeginPopup("my_select_popup##9")) {
-                    for (int i = 0; i < smax - 1; i++) {
+                    for (int i = 0; i < smax; i++) {
                         char buf[32];
                         sprintf(buf, "%d", i);
                         if (ImGui::Selectable(buf)) {
@@ -438,9 +444,7 @@ void ShowTables(bool* p_open, bool p_m, bool sacrifice, bool pickr1, bool &calc_
                     }
                     ImGui::EndPopup();
                 }
-                for (size_t z = 11; z-- > 0; ) {
-                    if (smax - 1 < z)
-                        continue;
+                for (size_t z = smax - r3st; z-- > 0; ) {
                     ImGui::Text("Table %u: Expected value for chosen row given r1 vs r2 where r3 = %u", smax - z, z);
                     std::string s3 = "##Table_" + std::to_string(z);
                     char* buf2 = &s3[0];
@@ -482,6 +486,12 @@ void ShowTables(bool* p_open, bool p_m, bool sacrifice, bool pickr1, bool &calc_
         if (ImGui::BeginTabItem("Probability Tables")) {
             ImGui::Text("apply settings from other window to fill in the tables");
             if (p_m && s1 > 0) {
+                if (r1st > smax - 2)
+                    r1st = smax - 2;
+                if (r2st > smax - 2)
+                    r2st = smax - 2;
+                if (r3st > smax - 1)
+                    r3st = smax - 1;
                 ImGui::Text("r1 is the total remaining slots from row 1");
                 ImGui::Text("r2 is the total remaining slots from row 2");
                 ImGui::Text("r3 is the total remaining slots from row 3");
@@ -590,7 +600,7 @@ void ShowTables(bool* p_open, bool p_m, bool sacrifice, bool pickr1, bool &calc_
                 ImGui::SameLine();
                 ImGui::Text("%d", r3st);
                 if (ImGui::BeginPopup("my_select_popup##8")) {
-                    for (int i = 0; i < smax - 1; i++) {
+                    for (int i = 0; i < smax; i++) {
                         char buf[32];
                         sprintf(buf, "%d", i);
                         if (ImGui::Selectable(buf)) {
@@ -703,9 +713,7 @@ void ShowTables(bool* p_open, bool p_m, bool sacrifice, bool pickr1, bool &calc_
                         table_mem2[j] = -1;
                     }
                 }
-                for (size_t z = 11; z-- > 0; ) {
-                    if (smax - 1 < z)
-                        continue;
+                for (size_t z = smax - r3st; z-- > 0; ) {
                     ImGui::Text("Table %u: Probabilities given r1 vs r2 where r3 = %u", smax - z, z);
                     std::string s3 = "##Table" + std::to_string(z);
                     char* buf2 = &s3[0];
