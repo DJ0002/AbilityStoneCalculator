@@ -4,7 +4,7 @@ A GUI Calculator for making optimal decisions for Ability Stones in the game Los
 
 # Download
 
-The download can be found here: [Ability Stone Calculator Windows 64 bit](https://github.com/DJ0002/AbilityStoneCalculator/releases/tag/v1.6).
+The download can be found here: [Ability Stone Calculator Windows 64 bit](https://github.com/DJ0002/AbilityStoneCalculator/releases/tag/v1.7).
 
 ## Table of contents
 
@@ -21,7 +21,7 @@ Start off by selecting whether or not you want to enable probability mode, then 
 
 ## Method
 
-In general, dynamic programming is used to solve the optimization problems. It is done from the bottom-up with tabulation. After the subproblems are solved, their solutions are used to more easily solve the larger problems. For example, the solution for optimizing a problem where there are 2 slots per row can use the solution from a problem where the is 1 slot per row. Click on Example code for more details:
+In general, dynamic programming is used to solve the optimization problems. It is done from the bottom-up with tabulation. After the subproblems are solved, their solutions are used to more easily solve the larger problems. For example, the solution for optimizing a problem where there are 2 slots per row can use the solution from a problem where there is 1 slot per row. Click on Example code for more details:
 
 <details>
   <summary>Example code</summary>
